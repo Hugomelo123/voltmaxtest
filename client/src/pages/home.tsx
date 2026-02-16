@@ -2,6 +2,7 @@ import React from 'react';
 import { Header } from '@/components/Header';
 import { Hero } from '@/components/Hero';
 import { Calculator } from '@/components/Calculator';
+import { Features } from '@/components/Features';
 import { LanguageProvider } from '@/components/LanguageContext';
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
         <Header />
         <main>
           <Hero />
+          <Features />
           <Calculator />
         </main>
         

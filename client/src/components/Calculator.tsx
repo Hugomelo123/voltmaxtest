@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent } from '@/components/ui/card';
 import { Home, Building2, Building, ArrowDown, Leaf, Sun, TrendingUp, Euro } from 'lucide-react';
-import { LeadForm } from './LeadForm';
+import { LeadForm } from '@/components/LeadForm';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function Calculator() {
