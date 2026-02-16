@@ -52,12 +52,31 @@ const COST_EUR_PER_KWP = 2200;
 /** Approx. share of bill offset by self-consumption (typical household). */
 const SAVINGS_BILL_RATIO = 0.45;
 
-export function calculateSolar(inputs: QuoteInputs): SolarCalculation {
-  const { roofArea, monthlyBill, klimabonusScheme = '2026' } = inputs;
+/** Roof type: effective area factor (pitched = ref, flat/facade less efficient) and cost multiplier. */
+const ROOF_FACTORS: Record<string, { areaFactor: number; costFactor: number }> = {
+  pitched: { areaFactor: 1, costFactor: 1 },
+  flat: { areaFactor: 0.88, costFactor: 1.07 },
+  facade: { areaFactor: 0.62, costFactor: 1.05 },
+};
 
-  const systemSize = Math.round(roofArea * ROOF_AREA_TO_KWP * 10) / 10;
+/** Property type: cost multiplier (business often slightly higher). */
+const PROPERTY_FACTORS: Record<string, number> = {
+  house: 1,
+  apartment: 1,
+  business: 1.06,
+};
+
+export function calculateSolar(inputs: QuoteInputs): SolarCalculation {
+  const { roofArea, monthlyBill, roofType, propertyType, klimabonusScheme = '2026' } = inputs;
+
+  const roof = ROOF_FACTORS[roofType] ?? ROOF_FACTORS.pitched;
+  const propFactor = PROPERTY_FACTORS[propertyType] ?? 1;
+
+  const effectiveArea = roofArea * roof.areaFactor;
+  const systemSizeRaw = Math.round(effectiveArea * ROOF_AREA_TO_KWP * 10) / 10;
+  const systemSize = Math.max(0.5, systemSizeRaw);
   const annualProduction = Math.round(systemSize * PRODUCTION_KWH_PER_KWP);
-  const installationCost = Math.round(systemSize * COST_EUR_PER_KWP);
+  const installationCost = Math.round(systemSize * COST_EUR_PER_KWP * roof.costFactor * propFactor);
 
   let subsidy =
     klimabonusScheme === 'transition'

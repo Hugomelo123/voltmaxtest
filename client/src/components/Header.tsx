@@ -16,7 +16,7 @@ export function Header() {
         </div>
 
         <nav className="hidden md:flex items-center gap-8">
-          <a href="#" className="text-sm font-medium hover:text-primary transition-colors">{t('nav.home')}</a>
+          <a href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="text-sm font-medium hover:text-primary transition-colors">{t('nav.home')}</a>
           <a href="#calculator" className="text-sm font-medium hover:text-primary transition-colors">{t('nav.calculator')}</a>
           <a href="#contact" className="text-sm font-medium hover:text-primary transition-colors">{t('nav.contact')}</a>
         </nav>

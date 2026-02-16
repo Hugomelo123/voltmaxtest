@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Card, CardContent } from '@/components/ui/card';
 import { Home, Building2, Building, ArrowDown, Leaf, Sun, TrendingUp, Euro } from 'lucide-react';
 import { LeadForm } from '@/components/LeadForm';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { KLIMABONUS } from '@/lib/company';
 
 export function Calculator() {

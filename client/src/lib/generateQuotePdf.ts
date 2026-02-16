@@ -132,7 +132,18 @@ export function generateQuotePdf(data: QuotePdfData): jsPDF {
   doc.setFontSize(8);
   doc.setTextColor(100, 100, 100);
   doc.text('This quotation is indicative and based on the data provided. Final offer subject to site survey and technical assessment. Prices may vary. Klimabonus eligibility and amounts depend on current regulations and your situation.', margin, y, { maxWidth: pageW - 2 * margin });
-  y += 14;
+  y += 10;
+
+  // Calculation notes (basis of figures)
+  doc.setFontSize(8);
+  doc.setFont('helvetica', 'bold');
+  doc.setTextColor(...DARK_GRAY);
+  doc.text('Calculation basis (indicative):', margin, y);
+  doc.setFont('helvetica', 'normal');
+  doc.text('• System size: from roof area and roof type (pitched / flat / facade). Production: 900 kWh/kWp (Luxembourg indicative).', margin + 2, y + 5, { maxWidth: pageW - 2 * margin - 2 });
+  doc.text('• Installation cost: market reference €2,200/kWp (excl. VAT), adjusted for roof type and property type.', margin + 2, y + 10, { maxWidth: pageW - 2 * margin - 2 });
+  doc.text('• Annual savings: estimated at 45% of your declared monthly bill × 12 (self-consumption). ROI = net investment ÷ annual savings.', margin + 2, y + 15, { maxWidth: pageW - 2 * margin - 2 });
+  y += 22;
 
   // —— Company block (premium: all info) ——
   doc.setFillColor(...LIGHT_GRAY);
@@ -215,10 +226,40 @@ export function generateQuotePdf(data: QuotePdfData): jsPDF {
   doc.text(`Terms: ${COMPANY.urls.terms}`, margin + 2, y + 16);
   y += 28;
 
+  // —— Klimabonus 2026 rules & important notes ——
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.setTextColor(...BLACK);
+  doc.text('Klimabonus 2026 – rules applied to this quote', margin, y);
+  doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
-  doc.setTextColor(100, 100, 100);
-  const disclaimer = 'This document is an indicative solar quotation. Final terms and pricing are subject to a technical visit and written offer. Klimabonus subsidies are subject to applicable regulations and eligibility. Voltmax SARL reserves the right to modify or withdraw offers.';
-  doc.text(doc.splitTextToSize(disclaimer, pageW - 2 * margin), margin, y);
+  doc.setTextColor(...DARK_GRAY);
+  y += 7;
+
+  const is2026 = results.klimabonusScheme === '2026';
+  if (is2026) {
+    doc.text('• Scheme 2026 (orders from 5 Jan 2026): subsidy = PPV × (1155 − 1155/35 × PPV) €, max €10,000 for PPV ≥ 15 kWp. Self-consumption only.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+    y += 5;
+    doc.text('• Pre-financing available: subsidy can be deducted from the installer\'s invoice; installer must be on the official register.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+    y += 5;
+    doc.text('• Installations with guaranteed feed-in tariff are not eligible for subsidy under the 2026 scheme.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+  } else {
+    doc.text('• Transition scheme (order before 4 Mar 2026, invoice by 31 Dec 2026): 50% of eligible cost, max €1,250/kWp for self-consumption or energy community.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+    y += 5;
+    doc.text('• Final invoice must be issued no later than 31 December 2026 to qualify under the transition rules.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+  }
+  y += 8;
+
+  doc.setFont('helvetica', 'bold');
+  doc.text('Important notes', margin, y);
+  doc.setFont('helvetica', 'normal');
+  y += 5;
+  doc.text('• Official calculator and conditions: guichet.public.lu (simulateur photovoltaïque) and klima-agence.lu.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+  y += 5;
+  doc.text('• Subsidy cannot exceed the actual eligible cost. Eligibility depends on your situation and current regulations.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+  y += 5;
+  doc.text('• This document is an indicative quotation. Final terms and pricing are subject to a technical visit and written offer. Voltmax SARL reserves the right to modify or withdraw offers.', margin + 2, y, { maxWidth: pageW - 2 * margin - 2 });
+  y += 12;
 
   doc.setFontSize(8);
   doc.setTextColor(120, 120, 120);
