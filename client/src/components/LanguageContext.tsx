@@ -31,6 +31,9 @@ const translations: Record<string, Record<Language, string>> = {
   "form.facade": { en: "Facade", fr: "Façade" },
   "form.roof_area": { en: "Roof Area Available", fr: "Surface de Toit Disponible" },
   "form.monthly_bill": { en: "Monthly Electricity Bill", fr: "Facture Mensuelle d'Électricité" },
+  "form.klimabonus_scheme": { en: "Klimabonus scheme", fr: "Régime Klimabonus" },
+  "form.scheme_2026": { en: "2026 scheme (from 5 Jan 2026)", fr: "Régime 2026 (à partir du 5 janv. 2026)" },
+  "form.scheme_transition": { en: "Transition (order before 4 Mar 2026)", fr: "Transition (commande avant le 4 mars 2026)" },
 
   // Results
   "result.system_size": { en: "Recommended System", fr: "Système Recommandé" },
@@ -38,6 +41,7 @@ const translations: Record<string, Record<Language, string>> = {
   "result.installation_cost": { en: "Installation Cost", fr: "Coût d'Installation" },
   "result.subsidy": { en: "Klimabonus Subsidy", fr: "Subside Klimabonus" },
   "result.net_cost": { en: "Net Investment", fr: "Investissement Net" },
+  "result.after_subsidy": { en: "After €{{amount}} Klimabonus", fr: "Après {{amount}} € Klimabonus" },
   "result.annual_savings": { en: "Annual Savings", fr: "Économies Annuelles" },
   "result.roi": { en: "Return on Investment", fr: "Retour sur Investissement" },
   "result.years": { en: "years", fr: "ans" },
@@ -50,7 +54,18 @@ const translations: Record<string, Record<Language, string>> = {
   "lead.phone": { en: "Phone Number", fr: "Numéro de Téléphone" },
   "lead.submit": { en: "Send My Quote", fr: "Envoyer Mon Devis" },
   "lead.success": { en: "Quote Sent Successfully!", fr: "Devis Envoyé avec Succès !" },
-  "lead.sending": { en: "Generating PDF...", fr: "Génération du PDF..." },
+  "lead.sending": { en: "Sending & generating PDF...", fr: "Envoi et génération du PDF..." },
+  "lead.toast_sent": { en: "Your details were sent. Check your downloads for the PDF.", fr: "Vos coordonnées ont été envoyées. Consultez vos téléchargements pour le PDF." },
+  "lead.toast_pdf_only": { en: "Check your downloads for the PDF. You may contact us directly to confirm.", fr: "Consultez vos téléchargements pour le PDF. Vous pouvez nous contacter pour confirmer." },
+  "lead.toast_title_sent": { en: "Quote sent & PDF ready!", fr: "Devis envoyé et PDF prêt !" },
+  "lead.toast_title_pdf": { en: "PDF ready!", fr: "PDF prêt !" },
+  "lead.follow_up": { en: "One of our solar experts will contact you shortly at", fr: "Un de nos experts solaires vous contactera prochainement au" },
+  "lead.another_quote": { en: "Get Another Quote", fr: "Obtenir un autre devis" },
+
+  // Klimabonus note (calculator)
+  "klimabonus.note_2026": { en: "Subsidy under 2026 scheme (formula up to €10,000 at 15 kWp). Pre-financing available.", fr: "Subside selon le régime 2026 (formule jusqu'à 10 000 € à 15 kWp). Préfinancement possible." },
+  "klimabonus.note_transition": { en: "Subsidy under transition scheme (50%, max €1,250/kWp). Orders before 4 Mar 2026.", fr: "Subside selon le régime de transition (50 %, max 1 250 €/kWp). Commandes avant le 4 mars 2026." },
+  "klimabonus.link": { en: "Official calculator", fr: "Calculateur officiel" },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);

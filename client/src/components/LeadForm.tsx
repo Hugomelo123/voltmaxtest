@@ -5,12 +5,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { SolarCalculation, QuoteInputs } from '@/lib/calculator';
-import { jsPDF } from 'jspdf';
-import autoTable from 'jspdf-autotable';
+import { downloadQuotePdf } from '@/lib/generateQuotePdf';
 import { Loader2, CheckCircle2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { motion } from 'framer-motion';
-import logo from '@/assets/logo.png';
 
 interface LeadFormProps {
   results: SolarCalculation;
@@ -18,7 +16,7 @@ interface LeadFormProps {
 }
 
 export function LeadForm({ results, inputs }: LeadFormProps) {
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -28,132 +26,49 @@ export function LeadForm({ results, inputs }: LeadFormProps) {
     email: '',
     phone: ''
   });
-
-  const generatePDF = () => {
-    const doc = new jsPDF();
-    const primaryColor = [255, 215, 0]; // #FFD700
-    const blackColor = [0, 0, 0];
-
-    // Header
-    doc.setFillColor(0, 0, 0);
-    doc.rect(0, 0, 210, 40, 'F');
-    
-    doc.setTextColor(255, 215, 0);
-    doc.setFontSize(24);
-    doc.setFont("helvetica", "bold");
-    doc.text("VOLTMAX", 20, 25);
-    
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Luxembourg's Premium Solar Partner", 20, 32);
-
-    // Client Details
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(14);
-    doc.setFont("helvetica", "bold");
-    doc.text("SOLAR QUOTATION", 20, 60);
-
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Prepared for: ${formData.name}`, 20, 70);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 75);
-    doc.text(`Property: ${inputs.propertyType} (${inputs.roofType})`, 20, 80);
-
-    // System Specs Table
-    autoTable(doc, {
-      startY: 90,
-      head: [['System Specification', 'Value']],
-      body: [
-        ['Roof Area', `${inputs.roofArea} m²`],
-        ['System Size', `${results.systemSize} kWp`],
-        ['Annual Production', `${results.annualProduction.toLocaleString()} kWh`],
-        ['Estimated Monthly Bill', `${inputs.monthlyBill} €`],
-      ],
-      theme: 'grid',
-      headStyles: { fillColor: [0, 0, 0], textColor: [255, 215, 0] },
-      styles: { fontSize: 10, cellPadding: 4 },
-    });
-
-    // Financials Table
-    autoTable(doc, {
-      startY: (doc as any).lastAutoTable.finalY + 15,
-      head: [['Financial Breakdown', 'Amount (€)']],
-      body: [
-        ['Installation Cost', `€${results.installationCost.toLocaleString()}`],
-        ['Klimabonus Subsidy (-)', `€${results.subsidy.toLocaleString()}`],
-        ['NET INVESTMENT', `€${results.netCost.toLocaleString()}`],
-        ['Annual Savings', `€${results.annualSavings.toLocaleString()}`],
-      ],
-      theme: 'striped',
-      headStyles: { fillColor: [0, 0, 0], textColor: [255, 215, 0] },
-      styles: { fontSize: 10, cellPadding: 4 },
-      columnStyles: {
-        1: { fontStyle: 'bold', halign: 'right' }
-      }
-    });
-
-    // ROI Section
-    const finalY = (doc as any).lastAutoTable.finalY + 20;
-    doc.setFillColor(255, 215, 0);
-    doc.roundedRect(20, finalY, 170, 30, 2, 2, 'F');
-    
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(12);
-    doc.setFont("helvetica", "bold");
-    doc.text(`RETURN ON INVESTMENT: ${results.roi} YEARS`, 105, finalY + 12, { align: 'center' });
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text(`Estimated total savings over 25 years: €${(results.annualSavings * 25).toLocaleString()}`, 105, finalY + 22, { align: 'center' });
-
-    // Footer
-    doc.setFontSize(9);
-    doc.setTextColor(100, 100, 100);
-    doc.text("Voltmax Luxembourg - 123 Solar Avenue, L-1234 Luxembourg", 105, 280, { align: 'center' });
-    doc.text("Contact: k.gajda@voltmax.lu | +352 26 33 86", 105, 285, { align: 'center' });
-
-    doc.save(`Voltmax_Quote_${formData.name.replace(/\s+/g, '_')}.pdf`);
-  };
-
-  const sendWhatsAppNotification = async () => {
-    // This is a client-side simulation of the API call requested
-    // In a real app, this would hit a backend endpoint
-    console.log("Sending WhatsApp via Twilio API...");
-    
-    const message = `🔆 NEW VOLTMAX LEAD
-👤 ${formData.name}
-📞 ${formData.phone}
-📧 ${formData.email}
-🏠 ${inputs.propertyType} - ${inputs.roofType} - ${inputs.roofArea}m²
-⚡ System: ${results.systemSize}kWp
-💰 Est. value: €${results.installationCost}
-🎁 Subsidy: €${results.subsidy}
-📊 ROI: ${results.roi} years
-→ Follow up NOW`;
-
-    console.log(message);
-    // Placeholder for actual API call
-  };
+  const [quoteRef, setQuoteRef] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    let saved = false;
+    let ref = '';
 
-    // Simulate API delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // 1) Enviar dados para o servidor (guardar lead)
+      const res = await fetch('/api/quote', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          inputs: inputs,
+          results: results,
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (res.ok && data.success) {
+        saved = true;
+      }
+    } catch (_err) {
+      // Falha de rede: continuamos e geramos o PDF na mesma
+    }
 
-    // Generate PDF
-    generatePDF();
-
-    // Send Notification
-    await sendWhatsAppNotification();
+    // 2) Gerar e descarregar PDF premium (sempre)
+    ref = downloadQuotePdf({
+      formData,
+      inputs,
+      results,
+    });
+    setQuoteRef(ref);
 
     setLoading(false);
     setSuccess(true);
-    
+
     toast({
-      title: "Quote Generated!",
-      description: "Check your downloads for the PDF.",
+      title: saved ? t('lead.toast_title_sent') : t('lead.toast_title_pdf'),
+      description: saved ? t('lead.toast_sent') : t('lead.toast_pdf_only'),
       className: "bg-primary text-black border-none"
     });
   };
@@ -170,13 +85,16 @@ export function LeadForm({ results, inputs }: LeadFormProps) {
             <CheckCircle2 className="w-8 h-8 text-black" />
           </motion.div>
           <h3 className="text-2xl font-display font-bold text-white">{t('lead.success')}</h3>
-          <p className="text-gray-400">One of our solar experts will contact you shortly at {formData.phone}.</p>
+          <p className="text-gray-400">
+            {quoteRef && <span className="block font-mono text-sm text-primary/90 mb-1">Ref: {quoteRef}</span>}
+            {t('lead.follow_up')} {formData.phone}.
+          </p>
           <Button 
             onClick={() => setSuccess(false)}
             variant="outline" 
             className="mt-4 border-white/20 text-white hover:bg-white/10"
           >
-            Get Another Quote
+            {t('lead.another_quote')}
           </Button>
         </CardContent>
       </Card>

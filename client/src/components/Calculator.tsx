@@ -8,6 +8,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Home, Building2, Building, ArrowDown, Leaf, Sun, TrendingUp, Euro } from 'lucide-react';
 import { LeadForm } from '@/components/LeadForm';
 import { motion, AnimatePresence } from 'framer-motion';
+import { KLIMABONUS } from '@/lib/company';
 
 export function Calculator() {
   const { t } = useLanguage();
@@ -16,7 +17,8 @@ export function Calculator() {
     propertyType: 'house',
     roofType: 'pitched',
     roofArea: 60,
-    monthlyBill: 150
+    monthlyBill: 150,
+    klimabonusScheme: '2026',
   });
 
   const [results, setResults] = useState<SolarCalculation>(calculateSolar(inputs));
@@ -141,6 +143,27 @@ export function Calculator() {
                 </div>
               </div>
 
+              {/* Klimabonus scheme (2026 vs transition) */}
+              <div className="space-y-3 pt-4 border-t border-border">
+                <Label className="text-base font-bold uppercase tracking-wide">{t('form.klimabonus_scheme')}</Label>
+                <div className="flex gap-2 p-1 bg-muted rounded-none">
+                  <button
+                    type="button"
+                    onClick={() => handleRadioChange('klimabonusScheme', '2026')}
+                    className={`flex-1 py-2 text-xs font-medium transition-all ${inputs.klimabonusScheme === '2026' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    {t('form.scheme_2026')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleRadioChange('klimabonusScheme', 'transition')}
+                    className={`flex-1 py-2 text-xs font-medium transition-all ${inputs.klimabonusScheme === 'transition' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
+                  >
+                    {t('form.scheme_transition')}
+                  </button>
+                </div>
+              </div>
+
             </CardContent>
           </Card>
 
@@ -169,7 +192,7 @@ export function Calculator() {
                 icon={<Euro className="w-5 h-5 text-primary" />}
                 label={t('result.net_cost')}
                 value={`€${results.netCost.toLocaleString()}`}
-                subValue={`After €${results.subsidy.toLocaleString()} subsidy`}
+                subValue={t('result.after_subsidy').replace('{{amount}}', results.subsidy.toLocaleString())}
                 highlight
               />
 
@@ -182,6 +205,12 @@ export function Calculator() {
               />
             </div>
 
+            <p className="text-xs text-muted-foreground mt-2">
+              {results.klimabonusScheme === '2026' ? t('klimabonus.note_2026') : t('klimabonus.note_transition')}{' '}
+              <a href={results.klimabonusScheme === '2026' ? KLIMABONUS.pvCalculatorUrl : KLIMABONUS.simulatorUrl} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                {t('klimabonus.link')}
+              </a>
+            </p>
             <LeadForm results={results} inputs={inputs} />
           </div>
         </div>
