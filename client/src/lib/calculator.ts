@@ -43,17 +43,21 @@ function subsidy2026(systemSizeKwp: number): number {
   return Math.round(capped);
 }
 
+/** Typical usable power per m² roof (kWp/m²). ~150 Wp/m² conservative. */
+const ROOF_AREA_TO_KWP = 0.15;
+/** Luxembourg: PVGIS ~1000–1100 kWh/kWp; we use 900 for indicative estimate (no overclaim). */
+const PRODUCTION_KWH_PER_KWP = 900;
+/** Market Luxembourg: €2100–2300/kWp (renov.lu, ecoclima.lu). We use 2200. */
+const COST_EUR_PER_KWP = 2200;
+/** Approx. share of bill offset by self-consumption (typical household). */
+const SAVINGS_BILL_RATIO = 0.45;
+
 export function calculateSolar(inputs: QuoteInputs): SolarCalculation {
   const { roofArea, monthlyBill, klimabonusScheme = '2026' } = inputs;
 
-  // System size recommended (kWp) = roof area × 0.15
-  const systemSize = Math.round(roofArea * 0.15 * 10) / 10;
-
-  // Estimated annual production (kWh) = kWp × 850
-  const annualProduction = Math.round(systemSize * 850);
-
-  // Installation cost (€) = kWp × 2200
-  const installationCost = Math.round(systemSize * 2200);
+  const systemSize = Math.round(roofArea * ROOF_AREA_TO_KWP * 10) / 10;
+  const annualProduction = Math.round(systemSize * PRODUCTION_KWH_PER_KWP);
+  const installationCost = Math.round(systemSize * COST_EUR_PER_KWP);
 
   let subsidy =
     klimabonusScheme === 'transition'
@@ -64,8 +68,7 @@ export function calculateSolar(inputs: QuoteInputs): SolarCalculation {
   // Net cost after subsidy (€)
   const netCost = installationCost - subsidy;
 
-  // Annual savings (€) = monthly bill × 0.45 × 12 (~45% reduction, self-consumption)
-  const annualSavings = Math.round(monthlyBill * 0.45 * 12);
+  const annualSavings = Math.round(monthlyBill * SAVINGS_BILL_RATIO * 12);
 
   const roi = annualSavings > 0 ? Math.round((netCost / annualSavings) * 10) / 10 : 0;
 

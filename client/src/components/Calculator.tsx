@@ -39,9 +39,9 @@ export function Calculator() {
     <section id="calculator" className="py-24 bg-background relative">
       <div className="container mx-auto px-4">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">Smart Calculator</span>
-          <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">Calculate Your Solar Potential</h2>
-          <p className="text-muted-foreground text-lg">Adjust the sliders to see your estimated savings and system size instantly.</p>
+          <span className="text-primary font-bold tracking-widest uppercase text-sm mb-2 block">{t('calculator.title')}</span>
+          <h2 className="text-4xl md:text-5xl font-display font-bold mb-4">{t('calculator.heading')}</h2>
+          <p className="text-muted-foreground text-lg">{t('calculator.intro')}</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
@@ -176,7 +176,7 @@ export function Calculator() {
                 icon={<Sun className="w-5 h-5 text-primary" />}
                 label={t('result.system_size')}
                 value={`${results.systemSize} kWp`}
-                subValue={`${Math.ceil(results.systemSize * 2.5)} Panels`}
+                subValue={`${Math.ceil(results.systemSize * 2.5)} ${t('result.panels')}`}
               />
 
               {/* Annual Production */}
@@ -184,7 +184,7 @@ export function Calculator() {
                 icon={<Leaf className="w-5 h-5 text-green-500" />}
                 label={t('result.production')}
                 value={`${results.annualProduction.toLocaleString()} kWh`}
-                subValue="Green Energy"
+                subValue={t('result.green_energy')}
               />
 
               {/* Net Cost */}
@@ -201,7 +201,7 @@ export function Calculator() {
                 icon={<TrendingUp className="w-5 h-5 text-primary" />}
                 label={t('result.roi')}
                 value={`${results.roi} ${t('result.years')}`}
-                subValue={`Save €${results.annualSavings.toLocaleString()} / year`}
+                subValue={t('result.save_per_year').replace('{{amount}}', results.annualSavings.toLocaleString())}
               />
             </div>
 

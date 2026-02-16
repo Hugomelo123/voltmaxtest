@@ -165,7 +165,7 @@ export function LeadForm({ results, inputs }: LeadFormProps) {
           </Button>
           
           <p className="text-xs text-center text-muted-foreground mt-4">
-            By submitting, you agree to receive a PDF quote and a follow-up call.
+            {t('lead.disclaimer')}
           </p>
         </form>
       </CardContent>

@@ -29,7 +29,7 @@ export function Hero() {
         >
           <div className="inline-flex items-center gap-2 bg-primary/20 backdrop-blur-sm border border-primary/30 text-primary px-4 py-1.5 rounded-full mb-6">
             <Zap className="w-4 h-4 fill-primary" />
-            <span className="text-xs font-bold tracking-wider uppercase">Luxembourg's #1 Solar Choice</span>
+            <span className="text-xs font-bold tracking-wider uppercase">{t('hero.badge')}</span>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-display font-bold leading-[0.9] mb-6">
@@ -59,8 +59,8 @@ export function Hero() {
                 ))}
               </div>
               <div>
-                <span className="block font-bold text-white">4.9/5 Rating</span>
-                <span className="text-white/60">Based on 500+ installs</span>
+                <span className="block font-bold text-white">{t('hero.rating')}</span>
+                <span className="text-white/60">{t('hero.rating_based')}</span>
               </div>
             </div>
           </div>

@@ -25,19 +25,25 @@ export function Header() {
           <div className="flex items-center bg-secondary/5 rounded-full p-1">
             <button 
               onClick={() => setLanguage('en')}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${language === 'en' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all ${language === 'en' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               EN
             </button>
             <button 
               onClick={() => setLanguage('fr')}
-              className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${language === 'fr' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+              className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all ${language === 'fr' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               FR
             </button>
+            <button 
+              onClick={() => setLanguage('pt')}
+              className={`px-2.5 py-1 rounded-full text-xs font-bold transition-all ${language === 'pt' ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
+            >
+              PT
+            </button>
           </div>
           
-          <Button className="hidden md:flex bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-none uppercase tracking-wider">
+          <Button className="hidden md:flex bg-primary text-primary-foreground hover:bg-primary/90 font-bold rounded-none uppercase tracking-wider" onClick={() => document.getElementById('calculator')?.scrollIntoView({ behavior: 'smooth' })}>
             {t('nav.get_quote')}
           </Button>
 
